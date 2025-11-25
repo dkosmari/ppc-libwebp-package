@@ -1,6 +1,7 @@
-pkgname=ppc-libwebp
+_pkgname=libwebp
+pkgname=ppc-${_pkgname}
 pkgver=1.6.0
-pkgrel=1
+pkgrel=2
 pkgdesc='A library to encode and decode images in WebP format.'
 arch=('any')
 url='https://chromium.googlesource.com/webm/libwebp/'
@@ -11,9 +12,9 @@ source=("https://storage.googleapis.com/downloads.webmproject.org/releases/webp/
 groups=('ppc-portlibs')
 
 build() {
-  cd libwebp-$pkgver
+  cd ${srcdir}/${_pkgname}-$pkgver
 
-  source /opt/devkitpro/ppcvars.sh
+  source "${DEVKITPRO}/ppcvars.sh"
 
   ./configure \
     --prefix="${PORTLIBS_PREFIX}" \
@@ -28,9 +29,10 @@ build() {
 }
 
 package() {
-  cd libwebp-$pkgver
+  cd ${_pkgname}-$pkgver
 
   make DESTDIR="${pkgdir}" install
+  install -Dm 644 COPYING -t "${pkgdir}${PORTLIBS_PREFIX}/licenses/${pkgname}"
 
   # FIX: libwebp builds a bunch of programs useless for cross compilation.
   rm -rfv "${pkgdir}/${PORTLIBS_PREFIX}/bin"
